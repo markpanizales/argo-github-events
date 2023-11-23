@@ -5,20 +5,29 @@ metadata:
 spec:
   service:
     ports:
-      - port: 12000
+      - name: argo-simple-app
+        port: 12000
         targetPort: 12000
   github:
     argo-simple-app:
-      owner: markpanizales
-      repository: argo-simple-app
+      repositories:
+        - owner: markpanizales
+          names: 
+            - argo-events
+            - argo-workflows
+      # githubApp:
+      #   privateKey:
+      #     name: github-app.pem
+      #     key: privateKey.pem
+      #   appID: <app id>
       webhook:
-        endpoint: /argo-simple-app
+        endpoint: /push
         port: "12000"
         method: POST
-        url: https://argo.speedforcex.com
+        url: https://github.com/markpanizales/argo-simple-app.git
       events:
         - "*"
-      apiToken:
+      api-token:
         name: github-access
         key: token
       insecure: true

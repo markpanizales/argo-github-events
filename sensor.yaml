@@ -39,11 +39,11 @@ spec:
                   secretName: github-access
                   items:
                     - key: token
-                      path: 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
+                      path: token
                     - key: user
-                      path: markpanizales
+                      path: user
                     - key: email
-                      path: makspanizales@gmail.com
+                      path: email
               templates:
               - name: build
                 dag:
