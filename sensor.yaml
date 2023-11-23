@@ -1,0 +1,67 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: webhook
+spec:
+  template:
+    serviceAccountName: argo-events-sa
+  dependencies:
+  - name: github
+    eventSourceName: github
+    eventName: argo-simple-app
+  triggers:
+  - template:
+      name: trigger
+      argoWorkflow:
+        group: argoproj.io
+        version: v1alpha1
+        resource: workflows
+        operation: submit
+        source:
+          resource:
+            apiVersion: argoproj.io/v1alpha1
+            kind: Workflow
+            metadata:
+              generateName: argo-simple-app-
+              namespace: workflows
+            spec:
+              entrypoint: check-branch
+              serviceAccountName: workflow
+              volumes:
+              - name: regcred
+                secret:
+                  secretName: regcred
+                  items:
+                    - key: .dockerconfigjson
+                      path: config.json
+              - name: github-access
+                secret:
+                  secretName: github-access
+                  items:
+                    - key: token
+                      path: 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
+                    - key: user
+                      path: markpanizales
+                    - key: email
+                      path: makspanizales@gmail.com
+              templates:
+              - name: build
+                dag:
+                  tasks:
+                  - name: build-step
+                    templateRef:
+                      name: container-image
+                      template: build-kaniko-git
+                      clusterScope: true
+                    arguments:
+                      parameters:
+                      - name: repo_url
+                        value: "https://github.com/markpanizales/argo-combined-app"
+                      - name: repo_ref
+                        value: ""
+                      - name: repo_commit_id
+                        value: ""
+                      - name: container_image
+                        value: 100115/
+                      - name: container_tag
+                        value: "1.0.0"
